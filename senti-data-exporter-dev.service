@@ -1,0 +1,21 @@
+[Unit]
+# senti-data-exporter-dev.service
+Description=Senti Data Exporter Dev
+Documentation=https://github.com/senti-iot/senti-data-exporter/blob/master/README.md
+# After=network.target
+
+[Service]
+WorkingDirectory=/srv/nodejs/senti/services/data-exporter/development
+ExecStart=/usr/bin/node server.js
+Environment=NODE_PORT=3020
+Environment=NODE_ENV=development
+Type=simple
+Restart=always
+# RestartSec=1
+StartLimitInterval=0
+User=root
+Group=root
+# KillSignal=SIGQUIT
+
+[Install]
+WantedBy=basic.target

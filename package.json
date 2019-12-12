@@ -1,0 +1,47 @@
+{
+	"name": "senti-data-exporter",
+	"version": "0.0.4",
+	"deprecated": false,
+	"description": "Senti Data Exporter service",
+	"main": "server.js",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/senti-iot/senti-data-exporter.git"
+	},
+	"keywords": [
+		"Senti.Cloud",
+		"Senti.IoT",
+		"Senti",
+		"IoT",
+		"Micro Service Data Exporter",
+		"NodeJS",
+		"Express",
+		"Micro Service",
+		"Javascript"
+	],
+	"author": {
+		"name": "Andrei Tudor",
+		"email": "apisupport@senti.cloud",
+		"url": "https://senti.io/"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/senti-iot/senti-data-exporter/issues"
+	},
+	"homepage": "https://senti.io",
+	"dependencies": {
+		"apisauce": "^1.1.1",
+		"cors": "^2.8.5",
+		"csv": "^5.3.1",
+		"dotenv": "^8.2.0",
+		"express": "^4.17.1",
+		"express-pino-logger": "^4.0.0",
+		"find-config": "^1.0.0",
+		"helmet": "^3.21.2",
+		"moment": "^2.22.2",
+		"mqtt": "^2.18.8",
+		"pino": "^5.14.0",
+		"senti-apicore": "0.0.17"
+	}
+}
