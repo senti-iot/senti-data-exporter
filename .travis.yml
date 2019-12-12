@@ -10,7 +10,7 @@ cache:
   directories:
   - "$HOME/.npm"
 before_deploy:
-- openssl aes-256-cbc -K $encrypted_75bb69474901_key -iv $encrypted_75bb69474901_iv
+- openssl aes-256-cbc -K $encrypted_06daf10a79c6_key -iv $encrypted_06daf10a79c6_iv
   -in deploy_rsa.enc -out /tmp/deploy_rsa -d
 - eval "$(ssh-agent -s)"
 - chmod 600 /tmp/deploy_rsa
