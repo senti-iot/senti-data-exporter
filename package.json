@@ -35,12 +35,14 @@
 		"cors": "^2.8.5",
 		"csv": "^5.3.1",
 		"dotenv": "^8.2.0",
+		"eslint": "^6.7.2",
 		"express": "^4.17.1",
 		"express-pino-logger": "^4.0.0",
 		"find-config": "^1.0.0",
 		"helmet": "^3.21.2",
 		"moment": "^2.22.2",
 		"mqtt": "^2.18.8",
+		"mysql2": "^2.0.2",
 		"pino": "^5.14.0",
 		"senti-apicore": "0.0.17"
 	}
