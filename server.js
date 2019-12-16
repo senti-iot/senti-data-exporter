@@ -23,6 +23,7 @@ app.use(cors())
 //---Start the express server---------------------------------------------------
 
 const startServer = () => {
+	console.log('Booting up')
 	app.listen(port, () => {
 		console.log('Senti Data Exporter Service started on port', port)
 	}).on('error', (err) => {
