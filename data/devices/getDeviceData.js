@@ -71,7 +71,6 @@ const getDeviceData = async (config, filters) => {
 							console.log(rss.ok)
 							return rss.ok ? rss.data : null
 						})
-						console.log('cData', cData[0])
 						if (cData) {
 							data = cData
 							console.log('Assigning new data to final', data[0])
