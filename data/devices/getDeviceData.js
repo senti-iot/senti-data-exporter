@@ -2,6 +2,8 @@
 // const { stringify } = require('csv')
 var mysqlConn = require('../../mysql/mySqlConn')
 var engineAPI = require('../../api/engine')
+var moment = require('moment')
+
 let compareType = (type) => {
 	switch (type) {
 		case 'equal':
