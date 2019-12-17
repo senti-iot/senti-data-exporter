@@ -21,9 +21,9 @@ let compareType = (type) => {
 	}
 }
 let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
-		${deviceFields.map(fd => `t.${fd.field} as ${fd.label}`)}${JSONFields.length > 0 ? ',' : ''}
-		${JSONFields.map(f => `dd.data->'$.${f.field}' as ${f.label}`)}${fields.length > 0 ? ',' : ''}
-		${fields.map((f) => `dd.${f.field} as ${f.label}`)}
+		${deviceFields.map(fd => `t.${fd.field}`)}${JSONFields.length > 0 ? ',' : ''}
+		${JSONFields.map(f => `dd.data->'$.${f.field}`)}${fields.length > 0 ? ',' : ''}
+		${fields.map((f) => `dd.${f.field}`)}
 	FROM
 		(
 		SELECT
