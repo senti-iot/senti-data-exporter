@@ -25,7 +25,7 @@ let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
 	FROM
 		(
 		SELECT
-			d.id, d.name
+			d.id, d.name, d.uuid
 		FROM
 			Customer c
 		INNER JOIN Registry r on
