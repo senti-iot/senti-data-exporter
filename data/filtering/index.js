@@ -2,7 +2,7 @@ const moment = require('moment')
 
 const handleFilters = (filters, data) => {
 	let nData = data
-	if (nData) {
+	if (nData && nData.length > 0) {
 
 		filters.forEach(f => {
 
