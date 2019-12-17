@@ -10,6 +10,7 @@ const handleFilters = (filters, data) => {
 				case 'datetime':
 					console.log('filtering by datetime')
 					nData = nData.filter(d => {
+						console.log(d[f.key], f.from, f.to)
 						return moment(d[f.key]).valueOf() >= moment(f.from).valueOf() && moment(d[f.key]).valueOf() <= moment(f.to).valueOf()
 					})
 					break;
