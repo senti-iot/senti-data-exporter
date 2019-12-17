@@ -60,8 +60,8 @@ const getDeviceData = async (config, filters) => {
 		console.log(JSONFields, fields, deviceFields)
 		let customerId = config.customerId
 		let final = []
-		console.log(mysqlConn.format(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, period.from, period.to]))
-		final = await mysqlConn.query(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, period.from, period.to])
+		console.log(mysqlConn.format(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, moment(period.from).format('YYYY-MM-DD'), moment(period.to).format('YYYY-MM-DD')]))
+		final = await mysqlConn.query(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, moment(period.from).format('YYYY-MM-DD'), moment(period.to).format('YYYY-MM-DD')])
 			.then(async ([cleanData]) => {
 				let data = cleanData
 				let cfColumns = config.columns.filter(c => c.cf)
