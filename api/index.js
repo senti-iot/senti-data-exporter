@@ -24,7 +24,7 @@ router.post('/:version/export', async (req, res) => {
 				console.log(data.slice(0, 10))
 			}
 			console.log('Sending Data')
-			return stringify(data, { header: true })
+			return stringify(data, { header: true, delimiter: ';' })
 				.pipe(res);
 			// return res.send(data)
 		}
