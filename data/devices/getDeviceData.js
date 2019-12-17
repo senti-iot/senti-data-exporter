@@ -95,6 +95,7 @@ const getDeviceData = async (config, filters) => {
 		return final
 	}
 	catch (e) {
+		console.log(e)
 		return []
 	}
 
