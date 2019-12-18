@@ -16,8 +16,9 @@ app.use(express.urlencoded({ extended: true }))
 /**
  * API
  */
-app.use([Endpoint])
 app.use(cors())
+app.options('*', cors())
+app.use([Endpoint])
 
 
 //---Start the express server---------------------------------------------------

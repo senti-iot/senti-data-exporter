@@ -2,6 +2,8 @@
 // const { stringify } = require('csv')
 var mysqlConn = require('../../mysql/mySqlConn')
 var engineAPI = require('../../api/engine')
+var moment = require('moment')
+
 let compareType = (type) => {
 	switch (type) {
 		case 'equal':
@@ -19,13 +21,13 @@ let compareType = (type) => {
 	}
 }
 let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
-		${deviceFields.map(fd => `t.${fd.field} as ${fd.label}`)},
-		${JSONFields.map(f => `dd.data->'$.${f.field}' as ${f.label}`)},
-		${fields.map((f) => `dd.${f.field} as ${f.label}`)}
+		${deviceFields.map(fd => `t.${fd.field}`)}${JSONFields.length > 0 ? ',' : ''}
+		${JSONFields.map(f => `dd.data->'$.${f.field}' as ${f.field}`)}${fields.length > 0 ? ',' : ''}
+		${fields.map((f) => `dd.${f.field}`)}
 	FROM
 		(
 		SELECT
-			d.id, d.name
+			d.*
 		FROM
 			Customer c
 		INNER JOIN Registry r on
@@ -60,8 +62,8 @@ const getDeviceData = async (config, filters) => {
 		console.log(JSONFields, fields, deviceFields)
 		let customerId = config.customerId
 		let final = []
-		console.log(mysqlConn.format(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, period.from, period.to]))
-		final = await mysqlConn.query(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, period.from, period.to])
+		console.log(mysqlConn.format(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, moment(period.from).format('YYYY-MM-DD'), moment(period.to).format('YYYY-MM-DD')]))
+		final = await mysqlConn.query(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, moment(period.from).format('YYYY-MM-DD'), moment(period.to).format('YYYY-MM-DD')])
 			.then(async ([cleanData]) => {
 				let data = cleanData
 				let cfColumns = config.columns.filter(c => c.cf)
@@ -93,6 +95,7 @@ const getDeviceData = async (config, filters) => {
 		return final
 	}
 	catch (e) {
+		console.log(e)
 		return []
 	}
 
