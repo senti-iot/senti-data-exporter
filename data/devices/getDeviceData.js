@@ -38,7 +38,7 @@ let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
 		t.id = dd.device_id
 	WHERE
 		dd.data->'$.time' >= ?
-		${filters.map((f) => `AND ${f.key}${compareType(f.type)}${f.value}`)}
+		${filters.map((f) => `AND ${f.key}${compareType(f.type)}${f.value}`).split(' ')}
 	AND
 		dd.data->'$.time' <= ?
 	ORDER BY
@@ -73,7 +73,7 @@ const getDeviceData = async (config, filters) => {
 						})
 						if (cData) {
 							data = cData
-							console.log('Assigning new data to final', data[0])
+							console.log('Assigning new data to final', data[0], cData[0])
 						}
 					}))
 				}

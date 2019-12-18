@@ -22,6 +22,7 @@ const handleFilters = (filters, data) => {
 	}
 	else {
 		return []
+
 	}
 }
 
