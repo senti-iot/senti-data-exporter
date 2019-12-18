@@ -44,7 +44,7 @@ let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
 			dd.data->'$.time' <= ?
 		${filters.map((f) => `OR dd.${f.key}${compareType(f.type)}${f.value}`).join(' ')}
 	ORDER BY
-		dd.created;`
+		dd.device_id;`
 async function asyncForEach(array, callback) {
 	for (let index = 0; index < array.length; index++) {
 		await callback(array[index], index, array);
