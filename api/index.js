@@ -21,7 +21,7 @@ router.post('/:version/export', async (req, res) => {
 				console.log('******* FILTERING DATA *******')
 				data = handleFilters(postFilters, data)
 				console.log('*** Filtered data ***')
-				console.log(data.slice(0, 10))
+				console.log(data.slice(0, 5))
 			}
 			console.log('Sending Data')
 			return stringify(data, { header: true, delimiter: ';' })

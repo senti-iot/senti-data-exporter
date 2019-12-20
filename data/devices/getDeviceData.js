@@ -41,8 +41,8 @@ let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
 	WHERE
 		dd.data->'$.time' >= ?
 		AND
-			dd.data->'$.time' <= ?
-		${filters.map((f) => `OR dd.${f.key}${compareType(f.type)}${f.value}`).join(' ')}
+		dd.data->'$.time' <= ?
+		${filters.length > 0 ? `AND (${filters.map((f, i) => i === 0 ? `dd.${f.key}${compareType(f.type)}${f.value}` : `OR dd.${f.key}${compareType(f.type)}${f.value}`).join(' ')})` : ''}
 	ORDER BY
 		dd.device_id;`
 async function asyncForEach(array, callback) {
