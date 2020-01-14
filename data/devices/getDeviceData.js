@@ -66,19 +66,33 @@ const getDeviceData = async (config, filters) => {
 		final = await mysqlConn.query(deviceDataQuery(JSONFields, fields, deviceFields, filters), [customerId, moment(period.from).format('YYYY-MM-DD'), moment(period.to).format('YYYY-MM-DD')])
 			.then(async ([cleanData]) => {
 				let data = cleanData
-				let cfColumns = config.columns.filter(c => c.cf)
+				let cfColumns = config.columns.filter(c => c.cf).map(c => c.cf)
+				console.log(cfColumns)
 				if (cfColumns.length > 0) {
-					await asyncForEach(cfColumns, (async c => {
-						let cData = await engineAPI.post('/', { nIds: [c.cf], data: data }).then((rss) => {
-							console.log(rss.ok)
-							return rss.ok ? rss.data : null
-						})
-						if (cData) {
-							data = cData
-							console.log('Assigning new data to final', data[0], cData[0])
-						}
-					}))
+
+					let cData = await engineAPI.post('/', { nIds: cfColumns, data: data }).then((rss) => {
+						console.log(rss)
+						console.log(rss.ok)
+						return rss.ok ? rss.data : null
+					})
+					if (cData) {
+						data = cData
+						console.log('Assigning new data to final', data[0], cData[0])
+					}
 				}
+
+				// if (cfColumns.length > 0) {
+				// 	await asyncForEach(cfColumns, (async c => {
+				// 		let cData = await engineAPI.post('/', { nIds: [c.cf], data: data }).then((rss) => {
+				// 			console.log(rss.ok)
+				// 			return rss.ok ? rss.data : null
+				// 		})
+				// 		if (cData) {
+				// 			data = cData
+				// 			console.log('Assigning new data to final', data[0], cData[0])
+				// 		}
+				// 	}))
+				// }
 				else {
 					console.log('noCFs')
 					data = cleanData
