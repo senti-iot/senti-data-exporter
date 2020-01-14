@@ -6,9 +6,10 @@ const getDeviceData = require('../data/devices/getDeviceData').getDeviceData
 const handleFilters = require('../data/filtering/index')
 const { stringify } = require('csv')
 
-router.post('/:version/export', async (req, res) => {
+router.post('/:version/export/:type', async (req, res) => {
 	let version = req.params.version
 	let authToken = req.headers.auth
+	let type = req.params.type
 	if (verifyAPIVersion(version)) {
 		if (authenticate(authToken)) {
 			let body = req.body
@@ -24,8 +25,16 @@ router.post('/:version/export', async (req, res) => {
 				console.log(data.slice(0, 5))
 			}
 			console.log('Sending Data')
-			return stringify(data, { header: true, delimiter: ';' })
-				.pipe(res);
+			switch (type) {
+				case 'csv':
+					return stringify(data, { header: true, delimiter: ';' })
+						.pipe(res);
+				case 'json':
+					return res.status(200).json(data)
+				default:
+					break;
+			}
+
 			// return res.send(data)
 		}
 		return res.status(500).json("Error: Invalid token")
