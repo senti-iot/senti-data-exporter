@@ -17,6 +17,8 @@ const encrypt = (text) => {
 
 let engineAPI = createAPI({
 	baseURL: 'http://127.0.0.1:3011/v1',
+	'maxContentLength': Infinity,
+	'maxBodyLength': Infinity,
 	headers: {
 		'Accept': 'application/json',
 		'Content-Type': 'application/json',

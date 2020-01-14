@@ -71,6 +71,8 @@ const getDeviceData = async (config, filters) => {
 				if (cfColumns.length > 0) {
 
 					let cData = await engineAPI.post('/', { nIds: cfColumns, data: data }).then((rss) => {
+						delete (rss.config.data)
+						console.log(rss)
 						console.log(rss.data)
 						console.log(rss.status)
 						console.log(rss.ok)
