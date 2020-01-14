@@ -45,11 +45,11 @@ let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
 		${filters.length > 0 ? `AND (${filters.map((f, i) => i === 0 ? `dd.${f.key}${compareType(f.type)}${f.value}` : `OR dd.${f.key}${compareType(f.type)}${f.value}`).join(' ')})` : ''}
 	ORDER BY
 		dd.device_id;`
-async function asyncForEach(array, callback) {
-	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index, array);
-	}
-}
+// async function asyncForEach(array, callback) {
+// 	for (let index = 0; index < array.length; index++) {
+// 		await callback(array[index], index, array);
+// 	}
+// }
 const getDeviceData = async (config, filters) => {
 	try {
 
