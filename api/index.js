@@ -22,7 +22,7 @@ router.post('/:version/export/:type', async (req, res) => {
 				console.log('******* FILTERING DATA *******')
 				data = handleFilters(postFilters, data)
 				console.log('*** Filtered data ***')
-				console.log(data.slice(0, 5))
+				console.log(data.slice(0, 3))
 			}
 			console.log('Sending Data')
 			switch (type) {
