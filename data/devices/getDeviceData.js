@@ -29,14 +29,14 @@ let deviceDataQuery = (JSONFields, fields, deviceFields, filters) => `SELECT
 		SELECT
 			d.*
 		FROM
-			Customer c
-		INNER JOIN Registry r on
-			c.id = r.customer_id
-		INNER JOIN Device d on
+			organisation o
+		INNER JOIN registry r on
+			o.id = r.orgId
+		INNER JOIN device d on
 			r.id = d.reg_id
 		WHERE
-			c.ODEUM_org_id = ? ) t
-	INNER JOIN Device_data_clean dd FORCE INDEX (index4) ON
+			o.uuid = ? ) t
+	INNER JOIN deviceDataClean dd FORCE INDEX (index4) ON
 		t.id = dd.device_id
 	WHERE
 		dd.data->'$.time' >= ?
