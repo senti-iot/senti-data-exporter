@@ -4,7 +4,9 @@
 	"deprecated": false,
 	"description": "Senti Data Exporter service",
 	"main": "server.js",
-	"scripts": {},
+	"scripts": {
+		"test" : "echo \"Testing is disabled\""
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/senti-iot/senti-data-exporter.git"
