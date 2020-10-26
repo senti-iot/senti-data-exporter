@@ -11,13 +11,14 @@ const port = process.env.NODE_PORT || 3021
 
 app.use(helmet())
 app.use(express.json())
+app.use(express.text())
 app.use(express.urlencoded({ extended: true, limit: '150mb' }))
 
 /**
  * API
  */
 app.use(cors())
-app.options('*', cors())
+// app.options('*', cors())
 app.use([Endpoint])
 
 
