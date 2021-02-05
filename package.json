@@ -5,7 +5,7 @@
 	"description": "Senti Data Exporter service",
 	"main": "server.js",
 	"scripts": {
-		"test" : "echo \"Testing is disabled\""
+		"test": "echo \"Testing is disabled\""
 	},
 	"repository": {
 		"type": "git",
@@ -33,7 +33,8 @@
 	},
 	"homepage": "https://senti.io",
 	"dependencies": {
-		"apisauce": "^1.1.1",
+		"apisauce": "^2.0.1",
+		"cli-table3": "^0.6.0",
 		"cors": "^2.8.5",
 		"csv": "^5.3.1",
 		"dotenv": "^8.2.0",
@@ -45,7 +46,7 @@
 		"mqtt": "^2.18.8",
 		"mysql2": "^2.0.2",
 		"pino": "^5.14.0",
-		"senti-apicore": "0.0.17"
+		"senti-apicore": "^0.0.54"
 	},
 	"devDependencies": {
 		"eslint": "^6.7.2"
