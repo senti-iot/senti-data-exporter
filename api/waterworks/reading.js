@@ -7,7 +7,7 @@ const router = express.Router()
 /**
  * User Usage
  */
-router.get('/v2/waterworks/usage/:type/:from/:to', async (req, res) => {
+router.get('/v2/waterworks/reading/:type/:from/:to', async (req, res) => {
 
 	let type = req.params.type
 	let bearerToken = req.bearer
@@ -18,7 +18,7 @@ router.get('/v2/waterworks/usage/:type/:from/:to', async (req, res) => {
 	 * */
 	databrokerAPI.setHeader('Authorization', `Bearer ${bearerToken}`)
 
-	let data = await databrokerAPI.get(`/v2/waterworks/data/usagebyday/${from}/${to}`).then(rs => rs.data)
+	let data = await databrokerAPI.get(`/v2/waterworks/data/volume/${from}/${to}`).then(rs => rs.data)
 
 
 	/**
@@ -44,7 +44,7 @@ router.get('/v2/waterworks/usage/:type/:from/:to', async (req, res) => {
 
 })
 
-router.post('/v2/waterworks/usage/:type/:from/:to', async (req, res) => {
+router.post('/v2/waterworks/reading/:type/:from/:to', async (req, res) => {
 
 	let type = req.params.type
 	let bearerToken = req.bearer
@@ -56,7 +56,7 @@ router.post('/v2/waterworks/usage/:type/:from/:to', async (req, res) => {
 	 * */
 	databrokerAPI.setHeader('Authorization', `Bearer ${bearerToken}`)
 
-	let data = await databrokerAPI.post(`/v2/waterworks/data/usagebyday/${from}/${to}`, uuids).then(rs => rs.data)
+	let data = await databrokerAPI.post(`/v2/waterworks/data/volume/${from}/${to}`, uuids).then(rs => rs.data)
 
 
 	/**
