@@ -34,6 +34,7 @@
 	"homepage": "https://senti.io",
 	"dependencies": {
 		"apisauce": "^2.0.1",
+		"archiver": "^5.2.0",
 		"cli-table3": "^0.6.0",
 		"cors": "^2.8.5",
 		"csv": "^5.3.1",

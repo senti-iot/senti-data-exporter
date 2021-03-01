@@ -23,6 +23,7 @@ module.exports.aclClient = aclClient
 // const Endpoint = require('./api/index.js')
 const auth = require('./api/auth')
 const waterWorksUsage = require('./api/waterworks/usage')
+const waterWorksExport = require('./api/waterworks/waterworks')
 
 const port = process.env.NODE_PORT || 3021
 
@@ -38,7 +39,7 @@ app.use(express.urlencoded({ extended: true, limit: '150mb' }))
 app.use(cors())
 // app.options('*', cors())
 // app.use([Endpoint])
-app.use([auth, waterWorksUsage])
+app.use([auth, waterWorksUsage, waterWorksExport])
 var allRoutes = require('./lib/routeLogger')
 
 //---Start the express server---------------------------------------------------
