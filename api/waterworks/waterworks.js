@@ -31,6 +31,8 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let isAdmin = req.body.isAdmin
 	let fields = req.body.fields
 	let uuids = req.body.uuids
+	let dateFormat = req.body.dateFormat
+	let dateLang = req.body.dateLang
 	//#region Get the data
 
 	/**
@@ -119,9 +121,27 @@ router.post('/v2/waterworks/export', async (req, res) => {
 
 	}
 
+	/**
+	 * Date Time formatting
+	 */
+	if (dateFormat) {
+		if (!moment(moment().format(dateFormat)).isValid()) {
+			return res.status(400).json({ error: 'Invalid date format' })
+		}
 
+		if (dateLang) {
+			moment.locale(dateLang)
+		}
+		if (data.usage)
+			data.usage = data.usage.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		if (data.benchmark)
+			data.benchmark = data.benchmark.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		if (data.temperature)
+			data.temperature = data.temperature.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		if (data.reading)
+			data.reading = data.reading.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
 
-
+	}
 	/**
 	 * Send the data back
 	 */
@@ -133,7 +153,6 @@ router.post('/v2/waterworks/export', async (req, res) => {
 		case 'csv':
 			res.setHeader('Content-Type', 'application/zip')
 			res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'SW-export-' + moment().format('YYYY-MM-DD_HH-mm') + '.zip\"')
-			console.log('Archiving Data', data)
 			// await res.status(200).attachment('download-' + Date.now() + '.csv\"').send()
 			data.usage ? archive.append(stringify(data.usage, { header: true, delimiter: ';' }), { name: 'SW-export-usage-' + dateForm() + '.csv' }) : null
 			data.benchmark ? archive.append(stringify(data.benchmark, { header: true, delimiter: ';' }), { name: 'SW-export-benchmark-' + dateForm() + '.csv' }) : null
@@ -149,7 +168,6 @@ router.post('/v2/waterworks/export', async (req, res) => {
 		case 'json':
 			res.setHeader('Content-Type', 'application/zip')
 			res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'SW-export-' + moment().format('YYYY-MM-DD_HH-mm') + '.zip\"')
-			console.log('Archiving Data', data)
 			// await res.status(200).attachment('download-' + Date.now() + '.csv\"').send()
 			data.usage ? archive.append(JSON.stringify(data.usage), { name: 'SW-export-usage-' + dateForm() + '.json' }) : null
 			data.benchmark ? archive.append(JSON.stringify(data.benchmark), { name: 'SW-export-benchmark-' + dateForm() + '.json' }) : null
