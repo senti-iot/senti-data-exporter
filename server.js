@@ -31,14 +31,13 @@ app.use(helmet())
 app.use(express.json())
 app.use(express.text())
 app.use(express.urlencoded({ extended: true, limit: '150mb' }))
+app.use(cors())
 
 
 /**
  * API
  */
-app.use(cors())
-// app.options('*', cors())
-// app.use([Endpoint])
+
 app.use([auth, waterWorksUsage, waterWorksExport])
 var allRoutes = require('./lib/routeLogger')
 
