@@ -22,7 +22,7 @@ const moment = require('moment')
 router.post('/v2/waterworks/export', async (req, res) => {
 	const archive = archiver('zip', {
 		zlib: { level: 9 } // Sets the compression level.
-	});
+	})
 	let type = req.body.type
 	let bearerToken = req.bearer
 	let from = req.body.from
@@ -33,6 +33,12 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let uuids = req.body.uuids
 	let dateFormat = req.body.dateFormat
 	let dateLang = req.body.dateLang
+
+	if (fields.length < 1) {
+		return res.send(400).json({
+			error: "No fields specified"
+		})
+	}
 	//#region Get the data
 
 	/**
@@ -41,8 +47,15 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let data = {
 		usage: null,
 		benchmark: null,
-		temperature: null,
-		reading: null
+		temperature: {
+			minATemp: null,
+			minWTemp: null
+		},
+		reading: null,
+		waterflow: {
+			minFlow: null,
+			maxFlow: null
+		}
 	}
 	databrokerAPI.setHeader('Authorization', `Bearer ${bearerToken}`)
 	console.log('Getting Data')
@@ -73,7 +86,44 @@ router.post('/v2/waterworks/export', async (req, res) => {
 			}
 		}
 		if (fields.includes('temperature')) {
-
+			/**
+			 * Min. Ambient Temp.
+			 */
+			if (uuids) {
+				data.temperature.minATemp = await databrokerAPI.post(`/v2/waterworks/data/minATemp/${from}/${to}`, uuids).then(rs => rs.data)
+			}
+			else {
+				data.temperature.minATemp = await databrokerAPI.get(`/v2/waterworks/data/minATemp/${from}/${to}`).then(rs => rs.data)
+			}
+			/**
+			 * Min. Water Temp.
+			 */
+			if (uuids) {
+				data.temperature.minWTemp = await databrokerAPI.post(`/v2/waterworks/data/minWTemp/${from}/${to}`, uuids).then(rs => rs.data)
+			}
+			else {
+				data.temperature.minWTemp = await databrokerAPI.get(`/v2/waterworks/data/minWTemp/${from}/${to}`).then(rs => rs.data)
+			}
+		}
+		if (fields.includes('waterflow')) {
+			/**
+			 * Min Flow
+			 */
+			if (uuids) {
+				data.waterflow.minFlow = await databrokerAPI.post(`/v2/waterworks/data/minFlow/${from}/${to}`, uuids).then(rs => rs.data)
+			}
+			else {
+				data.waterflow.minFlow = await databrokerAPI.get(`/v2/waterworks/data/minFlow/${from}/${to}`).then(rs => rs.data)
+			}
+			/**
+			 * Max Flow
+			 */
+			if (uuids) {
+				data.waterflow.maxFlow = await databrokerAPI.post(`/v2/waterworks/data/maxFlow/${from}/${to}`, uuids).then(rs => rs.data)
+			}
+			else {
+				data.waterflow.maxFlow = await databrokerAPI.get(`/v2/waterworks/data/maxFlow/${from}/${to}`).then(rs => rs.data)
+			}
 		}
 		if (fields.includes('reading')) {
 			console.log('Getting Reading as Admin')
@@ -107,9 +157,6 @@ router.post('/v2/waterworks/export', async (req, res) => {
 				data.benchmark = databrokerAPI.get(`/v2/waterworks/data/benchmark/${orgUUID}/${from}/${to}`).then(rs => rs.data)
 			}
 		}
-		if (fields.includes('temperature')) {
-
-		}
 		if (fields.includes('reading')) {
 			if (uuids) {
 				data.reading = await databrokerAPI.post(`/v2/waterworks/data/volume/${from}/${to}`, uuids).then(rs => rs.data)
@@ -121,10 +168,13 @@ router.post('/v2/waterworks/export', async (req, res) => {
 
 	}
 
+	console.log(data.waterflow)
+	console.log(data.temperature)
 	/**
 	 * Date Time formatting
 	 */
 	if (dateFormat) {
+		console.log('Date Format', moment(moment().format(dateFormat)).isValid())
 		if (!moment(moment().format(dateFormat)).isValid()) {
 			return res.status(400).json({ error: 'Invalid date format' })
 		}
@@ -136,8 +186,18 @@ router.post('/v2/waterworks/export', async (req, res) => {
 			data.usage = data.usage.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
 		if (data.benchmark)
 			data.benchmark = data.benchmark.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
-		if (data.temperature)
-			data.temperature = data.temperature.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		if (data.temperature.minWTemp) {
+			data.temperature.minWTemp = data.temperature.minWTemp.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.temperature.minATemp) {
+			data.temperature.minATemp = data.temperature.minATemp.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.waterflow.maxFlow) {
+			data.waterflow.maxFLow = data.waterflow.maxFlow.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.waterflow.minFlow) {
+			data.waterflow.minFlow = data.waterflow.minFlow.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
 		if (data.reading)
 			data.reading = data.reading.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
 
@@ -154,9 +214,20 @@ router.post('/v2/waterworks/export', async (req, res) => {
 			res.setHeader('Content-Type', 'application/zip')
 			res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'SW-export-' + moment().format('YYYY-MM-DD_HH-mm') + '.zip\"')
 			// await res.status(200).attachment('download-' + Date.now() + '.csv\"').send()
+			/**
+			 * Archiving the data
+			 */
+			//Usage
 			data.usage ? archive.append(stringify(data.usage, { header: true, delimiter: ';' }), { name: 'SW-export-usage-' + dateForm() + '.csv' }) : null
+			//Benchmark
 			data.benchmark ? archive.append(stringify(data.benchmark, { header: true, delimiter: ';' }), { name: 'SW-export-benchmark-' + dateForm() + '.csv' }) : null
-			data.temperature ? archive.append(stringify(data.temperature, { header: true, delimiter: ';' }), { name: 'SW-export-temperature-' + dateForm() + '.csv' }) : null
+			//Temperatures
+			data.temperature.minATemp ? archive.append(stringify(data.temperature.minATemp, { header: true, delimiter: ';' }), { name: 'SW-export-temp-minAmbientTemp-' + dateForm() + '.csv' }) : null
+			data.temperature.minWTemp ? archive.append(stringify(data.temperature.minWTemp, { header: true, delimiter: ';' }), { name: 'SW-export-temp-minWaterTemp' + dateForm() + '.csv' }) : null
+			//Waterflow
+			data.waterflow.minFlow ? archive.append(stringify(data.waterflow.minFlow, { header: true, delimiter: ';' }), { name: 'SW-export-waterflow-minFlow-' + dateForm() + '.csv' }) : null
+			data.waterflow.maxFlow ? archive.append(stringify(data.waterflow.maxFlow, { header: true, delimiter: ';' }), { name: 'SW-export-waterflow-maxFlow-' + dateForm() + '.csv' }) : null
+			//Reading
 			data.reading ? archive.append(stringify(data.reading, { header: true, delimiter: ';' }), { name: 'SW-export-reading-' + dateForm() + '.csv' }) : null
 			console.log('Done archiving data')
 			console.log('Sending data')
