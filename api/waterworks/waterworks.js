@@ -135,7 +135,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 					let flippedArr = [...data.reading].reverse()
 					uuids.forEach(id => {
 						finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
-						finalArr.push(flippedArr[data.reading.findIndex(f => f.uuid === id)])
+						finalArr.push(flippedArr[flippedArr.findIndex(f => f.uuid === id)])
 					});
 					// newArr.push(data.reading.shift())
 					// newArr.push(data.reading.pop())
@@ -151,7 +151,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 					let finalArr = []
 					allUUIDs.forEach(id => {
 						finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
-						finalArr.push(flippedArr[data.reading.findIndex(f => f.uuid === id)])
+						finalArr.push(flippedArr[flippedArr.findIndex(f => f.uuid === id)])
 					});
 					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
 				}
