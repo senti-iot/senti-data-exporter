@@ -131,19 +131,29 @@ router.post('/v2/waterworks/export', async (req, res) => {
 			if (uuids) {
 				data.reading = await databrokerAPI.post(`/v2/waterworks/data/volume/${from}/${to}`, uuids).then(rs => rs.data)
 				if (fields.includes('firstLast')) {
-					let newArr = []
-					newArr.push(data.reading.shift())
-					newArr.push(data.reading.pop())
-					data.reading = newArr
+					let finalArr = []
+					let flippedArr = [...data.reading].reverse()
+					uuids.forEach(id => {
+						finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
+						finalArr.push(flippedArr[data.reading.findIndex(f => f.uuid === id)])
+					});
+					// newArr.push(data.reading.shift())
+					// newArr.push(data.reading.pop())
+					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
 				}
 			}
 			else {
 				data.reading = await databrokerAPI.get(`/v2/waterworks/data/volume/${from}/${to}`).then(rs => rs.data)
 				if (fields.includes('firstLast')) {
-					let newArr = []
-					newArr.push(data.reading.shift())
-					newArr.push(data.reading.pop())
-					data.reading = newArr
+
+					let allUUIDs = [...new Set(data.reading.map(item => item.uuid))]
+					let flippedArr = [...data.reading].reverse()
+					let finalArr = []
+					allUUIDs.forEach(id => {
+						finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
+						finalArr.push(flippedArr[data.reading.findIndex(f => f.uuid === id)])
+					});
+					data.reading = finalArr
 				}
 			}
 		}
