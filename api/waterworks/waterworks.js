@@ -153,7 +153,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 						finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
 						finalArr.push(flippedArr[data.reading.findIndex(f => f.uuid === id)])
 					});
-					data.reading = finalArr
+					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
 				}
 			}
 		}
