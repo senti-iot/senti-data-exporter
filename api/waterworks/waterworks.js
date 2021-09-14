@@ -130,9 +130,21 @@ router.post('/v2/waterworks/export', async (req, res) => {
 
 			if (uuids) {
 				data.reading = await databrokerAPI.post(`/v2/waterworks/data/volume/${from}/${to}`, uuids).then(rs => rs.data)
+				if (fields.includes('firstLast')) {
+					let newArr = []
+					newArr.push(data.reading.shift())
+					newArr.push(data.reading.pop())
+					data.reading = newArr
+				}
 			}
 			else {
 				data.reading = await databrokerAPI.get(`/v2/waterworks/data/volume/${from}/${to}`).then(rs => rs.data)
+				if (fields.includes('firstLast')) {
+					let newArr = []
+					newArr.push(data.reading.shift())
+					newArr.push(data.reading.pop())
+					data.reading = newArr
+				}
 			}
 		}
 	}
