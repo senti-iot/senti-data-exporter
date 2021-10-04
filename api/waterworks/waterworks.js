@@ -33,6 +33,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let uuids = req.body.uuids
 	let dateFormat = req.body.dateFormat
 	let dateLang = req.body.dateLang
+	// let locale = req.body.locale
 
 	if (fields.length < 1) {
 		return res.send(400).json({

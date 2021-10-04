@@ -6,7 +6,7 @@ Documentation=https://github.com/senti-iot/senti-data-exporter/blob/master/READM
 
 [Service]
 WorkingDirectory=/srv/nodejs/senti/services/data-exporter/production
-ExecStart=/usr/bin/node server.js
+ExecStart=/usr/local/bin/node server.js
 Environment=NODE_PORT=3021
 Environment=NODE_ENV=production
 Type=simple
