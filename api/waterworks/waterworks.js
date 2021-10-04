@@ -33,7 +33,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let uuids = req.body.uuids
 	let dateFormat = req.body.dateFormat
 	let dateLang = req.body.dateLang
-	// let locale = req.body.locale
+	let locale = req.body.locale
 
 	if (fields.length < 1) {
 		return res.send(400).json({
@@ -199,14 +199,51 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	if (dateFormat) {
 		console.log('Date Format', moment(moment().format(dateFormat)).isValid())
 		if (!moment(moment().format(dateFormat)).isValid()) {
-			return res.status(400).json({ error: 'Invalid date format' })
+			return res.status(500).json({ error: 'Invalid date format' })
 		}
 
 		if (dateLang) {
 			moment.locale(dateLang)
 		}
 		if (data.usage)
-			data.usage = data.usage.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.usage = data.usage.map(u => {
+
+				return { ...u, datetime: moment(u.datetime).format(dateFormat) }
+			})
+		if (data.benchmark)
+			data.benchmark = data.benchmark.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		if (data.temperature.minWTemp) {
+			data.temperature.minWTemp = data.temperature.minWTemp.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.temperature.minATemp) {
+			data.temperature.minATemp = data.temperature.minATemp.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.waterflow.maxFlow) {
+			data.waterflow.maxFLow = data.waterflow.maxFlow.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.waterflow.minFlow) {
+			data.waterflow.minFlow = data.waterflow.minFlow.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+		}
+		if (data.reading)
+			data.reading = data.reading.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+
+	}
+	if (locale) {
+		console.log('Locale Format', locale)
+		if (locale !== 'en-US' || locale !== 'da-DK') {
+			return res.status(500).json({ error: 'Unsuported locale' })
+		}
+		if (data.usage)
+			data.usage = data.usage.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 		if (data.benchmark)
 			data.benchmark = data.benchmark.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
 		if (data.temperature.minWTemp) {
