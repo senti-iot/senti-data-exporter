@@ -6,6 +6,16 @@ const getDeviceData = require('../data/devices/getDeviceData').getDeviceData
 const handleFilters = require('../data/filtering/index')
 const { stringify } = require('csv')
 
+router.get('/test/:nr/:locale', (req, res) => {
+	const number = req.params.nr
+	const locale = req.params.locale
+
+	console.log(new Intl.NumberFormat(locale).format(number))
+	let formatter = new Intl.NumberFormat(locale).format(number)
+	res.status(200).json(formatter)
+})
+
+
 router.post('/:version/export/:type', async (req, res) => {
 	let version = req.params.version
 	let authToken = req.headers.auth
