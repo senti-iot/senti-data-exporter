@@ -356,7 +356,8 @@ router.post('/v2/waterworks/export', async (req, res) => {
 			// await res.status(200).attachment('download-' + Date.now() + '.csv\"').send()
 			data.usage ? archive.append(JSON.stringify(data.usage), { name: 'SW-export-usage-' + dateForm() + '.json' }) : null
 			data.benchmark ? archive.append(JSON.stringify(data.benchmark), { name: 'SW-export-benchmark-' + dateForm() + '.json' }) : null
-			(data.temperature.minATemp || data.temperature.minWTemp) ? archive.append(JSON.stringify(data.temperature), { name: 'SW-export-temperature-' + dateForm() + '.json' }) : null
+			data.temperature.minWTemp ? archive.append(JSON.stringify(data.temperature.minWTemp), { name: 'SW-export-temperature-minWTemp-' + dateForm() + '.json' }) : null
+			data.temperature.minATemp ? archive.append(JSON.stringify(data.temperature.minATemp), { name: 'SW-export-temperature-minATemp-' + dateForm() + '.json' }) : null
 			data.reading ? archive.append(JSON.stringify(data.reading), { name: 'SW-export-reading-' + dateForm() + '.json' }) : null
 			console.log('Done archiving data')
 			console.log('Sending data')
