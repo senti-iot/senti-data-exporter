@@ -230,7 +230,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	}
 	if (locale) {
 		console.log('Locale Format', locale)
-		if (locale !== 'en-US' || locale !== 'da-DK') {
+		if (locale !== 'en-US' && locale !== 'da-DK') {
 			return res.status(500).json({ error: 'Unsuported locale' })
 		}
 		if (data.usage)
@@ -245,21 +245,75 @@ router.post('/v2/waterworks/export', async (req, res) => {
 				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
 			})
 		if (data.benchmark)
-			data.benchmark = data.benchmark.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.benchmark = data.benchmark.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 		if (data.temperature.minWTemp) {
-			data.temperature.minWTemp = data.temperature.minWTemp.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.temperature.minWTemp = data.temperature.minWTemp.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 		}
 		if (data.temperature.minATemp) {
-			data.temperature.minATemp = data.temperature.minATemp.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.temperature.minATemp = data.temperature.minATemp.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 		}
 		if (data.waterflow.maxFlow) {
-			data.waterflow.maxFLow = data.waterflow.maxFlow.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.waterflow.maxFLow = data.waterflow.maxFlow.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 		}
 		if (data.waterflow.minFlow) {
-			data.waterflow.minFlow = data.waterflow.minFlow.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.waterflow.minFlow = data.waterflow.minFlow.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 		}
 		if (data.reading)
-			data.reading = data.reading.map(u => ({ ...u, datetime: moment(u.datetime).format(dateFormat) }))
+			data.reading = data.reading.map(u => {
+				let keys = Object.keys(u)
+				let obj = u
+				keys.map(key => {
+					if (Number(u[key])) {
+						obj[key] = obj[key].toLocaleString(locale)
+					}
+				})
+				return { ...obj, datetime: moment(u.datetime).format(dateFormat) }
+			})
 
 	}
 	/**
