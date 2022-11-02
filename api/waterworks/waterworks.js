@@ -135,8 +135,10 @@ router.post('/v2/waterworks/export', async (req, res) => {
 					let finalArr = []
 					let flippedArr = [...data.reading].reverse()
 					uuids.forEach(id => {
-						finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
-						finalArr.push(flippedArr[flippedArr.findIndex(f => f.uuid === id)])
+						if (data.reading.findIndex(f => f.uuid === id) !== -1) {
+							finalArr.push(data.reading[data.reading.findIndex(f => f.uuid === id)])
+							finalArr.push(flippedArr[flippedArr.findIndex(f => f.uuid === id)])
+						}
 					});
 					// newArr.push(data.reading.shift())
 					// newArr.push(data.reading.pop())
