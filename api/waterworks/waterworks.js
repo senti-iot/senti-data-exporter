@@ -158,6 +158,15 @@ router.post('/v2/waterworks/export', async (req, res) => {
 					});
 					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
 				}
+				if (fields.includes('onlyLast')) {
+					let allUUIDs = [...new Set(data.reading.map(item => item.uuid))]
+					let flippedArr = [...data.reading].reverse()
+					let finalArr = []
+					allUUIDs.forEach(id => {
+						finalArr.push(flippedArr[flippedArr.findIndex(f => f.uuid === id)])
+					});
+					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
+				}
 			}
 		}
 	}
