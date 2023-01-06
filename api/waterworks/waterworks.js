@@ -144,6 +144,16 @@ router.post('/v2/waterworks/export', async (req, res) => {
 					// newArr.push(data.reading.pop())
 					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
 				}
+				if (fields.includes('onlyLast')) {
+					let finalArr = []
+					let flippedArr = [...data.reading].reverse()
+					uuids.forEach(id => {
+						if (data.reading.findIndex(f => f.uuid === id) !== -1) {
+							finalArr.push(flippedArr[flippedArr.findIndex(f => f.uuid === id)])
+						}
+					});
+					data.reading = finalArr.sort((a, b) => a.uuid - b.uuid) //Sort it
+				}
 			}
 			else {
 				data.reading = await databrokerAPI.get(`/v2/waterworks/data/volume/${from}/${to}`).then(rs => rs.data)
