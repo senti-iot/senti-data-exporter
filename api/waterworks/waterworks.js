@@ -1,9 +1,10 @@
 const archiver = require('archiver')
-const { stringify } = require('csv')
 const express = require('express')
 const databrokerAPI = require('../engine')
 const router = express.Router()
 const moment = require('moment')
+const { AsyncParser } = require('@json2csv/node');
+
 
 /**
  * User Usage
@@ -21,7 +22,7 @@ const moment = require('moment')
  */
 router.post('/v2/waterworks/export', async (req, res) => {
 	const archive = archiver('zip', {
-		zlib: { level: 9 } // Sets the compression level.
+		zlib: { level: 9 }
 	})
 	let type = req.body.type
 	let bearerToken = req.bearer
@@ -36,7 +37,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let locale = req.body.locale
 
 	if (fields.length < 1) {
-		return res.send(400).json({
+		return res.sendStatus(400).json({
 			error: "No fields specified"
 		})
 	}
@@ -212,8 +213,8 @@ router.post('/v2/waterworks/export', async (req, res) => {
 
 	}
 
-	console.log(data.waterflow)
-	console.log(data.temperature)
+	// console.log(data.waterflow)
+	// console.log(data.temperature)
 	/**
 	 * Date Time formatting
 	 */
@@ -343,7 +344,7 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	let dateForm = () => {
 		return moment(from).format('YYYY-MM-DD_HH-mm') + ' - ' + moment(to).format('YYYY-MM-DD_HH-mm')
 	}
-	console.log('type', type)
+	// console.log('type', type)
 	switch (type) {
 		case 'csv':
 			res.setHeader('Content-Type', 'application/zip')
@@ -352,24 +353,57 @@ router.post('/v2/waterworks/export', async (req, res) => {
 			/**
 			 * Archiving the data
 			 */
+
+			archive.pipe(res)
+
+			const opts = { delimiter: ';' };
+			const transformOpts = {};
+			const asyncOpts = {};
+			const parser = new AsyncParser(opts, transformOpts, asyncOpts);
+
 			//Usage
-			data.usage ? archive.append(stringify(data.usage, { header: true, delimiter: ';' }), { name: 'SW-export-usage-' + dateForm() + '.csv' }) : null
+			if (data.usage) {
+				const csvUsage = await parser.parse(data.usage).promise();
+				archive.append(csvUsage, { name: 'SW-export-usage-' + dateForm() + '.csv' })
+			}
+
 			//Benchmark
-			data.benchmark ? archive.append(stringify(data.benchmark, { header: true, delimiter: ';' }), { name: 'SW-export-benchmark-' + dateForm() + '.csv' }) : null
+			if (data.benchmark) {
+				const csvBenchmark = await parser.parse(data.benchmark).promise();
+				archive.append(csvBenchmark, { name: 'SW-export-benchmark-' + dateForm() + '.csv' })
+			}
+
 			//Temperatures
-			data.temperature.minATemp ? archive.append(stringify(data.temperature.minATemp, { header: true, delimiter: ';' }), { name: 'SW-export-temp-minAmbientTemp-' + dateForm() + '.csv' }) : null
-			data.temperature.minWTemp ? archive.append(stringify(data.temperature.minWTemp, { header: true, delimiter: ';' }), { name: 'SW-export-temp-minWaterTemp' + dateForm() + '.csv' }) : null
+			if (data.temperature.minATemp) {
+				const csvMinATemp = await parser.parse(data.temperature.minATemp).promise();
+				archive.append(csvMinATemp, { name: 'SW-export-temp-minAmbientTemp-' + dateForm() + '.csv' })
+			}
+			if (data.temperature.minWTemp) {
+				const csvMinWTemp = await parser.parse(data.temperature.minWTemp).promise();
+				archive.append(csvMinWTemp, { name: 'SW-export-temp-minWaterTemp' + dateForm() + '.csv' })
+			}
+
 			//Waterflow
-			data.waterflow.minFlow ? archive.append(stringify(data.waterflow.minFlow, { header: true, delimiter: ';' }), { name: 'SW-export-waterflow-minFlow-' + dateForm() + '.csv' }) : null
-			data.waterflow.maxFlow ? archive.append(stringify(data.waterflow.maxFlow, { header: true, delimiter: ';' }), { name: 'SW-export-waterflow-maxFlow-' + dateForm() + '.csv' }) : null
+			if (data.waterflow.minFlow) {
+				const csvMinFlow = await parser.parse(data.waterflow.minFlow).promise();
+				archive.append(csvMinFlow, { name: 'SW-export-waterflow-minFlow-' + dateForm() + '.csv' })
+			}
+			if (data.waterflow.maxFlow) {
+				const csvMaxFlow = await parser.parse(data.waterflow.maxFlow).promise();
+				archive.append(csvMaxFlow, { name: 'SW-export-waterflow-maxFlow-' + dateForm() + '.csv' })
+			}
+
 			//Reading
-			data.reading ? archive.append(stringify(data.reading, { header: true, delimiter: ';' }), { name: 'SW-export-reading-' + dateForm() + '.csv' }) : null
+			if (data.reading) {
+				const csvReading = await parser.parse(data.reading).promise();
+				archive.append(csvReading, { name: 'SW-export-reading-' + dateForm() + '.csv' })
+			}
+
 			console.log('Done archiving data')
 			console.log('Sending data')
-			archive.pipe(res)
+
 			archive.finalize();
-			// stringify(data, { header: true, delimiter: ';' })
-			// .pipe(res)
+
 			break
 		case 'json':
 			res.setHeader('Content-Type', 'application/zip')
