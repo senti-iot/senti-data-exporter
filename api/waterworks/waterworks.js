@@ -4,7 +4,7 @@ const databrokerAPI = require('../engine')
 const router = express.Router()
 const moment = require('moment')
 const { AsyncParser } = require('@json2csv/node');
-
+const { Base64Encode } = require('base64-stream')
 
 /**
  * User Usage
@@ -347,14 +347,14 @@ router.post('/v2/waterworks/export', async (req, res) => {
 	// console.log('type', type)
 	switch (type) {
 		case 'csv':
-			res.setHeader('Content-Type', 'application/zip')
-			res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'SW-export-' + moment().format('YYYY-MM-DD_HH-mm') + '.zip\"')
+			// res.setHeader('Content-Type', 'application/zip')
+			// res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'SW-export-' + moment().format('YYYY-MM-DD_HH-mm') + '.zip\"')
 			// await res.status(200).attachment('download-' + Date.now() + '.csv\"').send()
 			/**
 			 * Archiving the data
 			 */
 
-			archive.pipe(res)
+			archive.pipe(new Base64Encode()).pipe(res)
 
 			const opts = { delimiter: ';' };
 			const transformOpts = {};
